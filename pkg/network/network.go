@@ -96,14 +96,14 @@ func (n Network) GrantRestake(addr string, validator validator.ValidatorForNetwo
 		minGasPrice = fmt.Sprintf("%v", n.Fees.FeeTokens[0].FixedMinGasPrice)
 		denom = n.Fees.FeeTokens[0].Denom
 	}
-	command1 := fmt.Sprintf("$ %s tx authz grant %s generic --msg-type /cosmos.staking.v1beta1.MsgDelegate --from ledger --ledger --chain-id %s --node %s --keyring-backend file --gas auto --gas-prices %s%s --gas-adjustment 1.5",
+	withdrawCommand := fmt.Sprintf("$ /path/to/binary/%s tx authz grant %s generic --msg-type /cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward --from ledger --ledger --chain-id %s --node %s --keyring-backend file --gas auto --gas-prices %v%s --gas-adjustment 1.5",
 		n.CliName,
 		validator.RestakeAddress,
 		n.ChainID,
 		n.NodeURI,
 		minGasPrice,
 		denom)
-	command2 := fmt.Sprintf("$ %s tx authz grant %s generic --msg-type /cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward --from ledger --ledger --chain-id %s --node %s --keyring-backend file --gas auto --gas-prices %v%s --gas-adjustment 1.5",
+	delegateCommand := fmt.Sprintf("$ /path/to/binary/%s tx authz grant %s generic --msg-type /cosmos.staking.v1beta1.MsgDelegate --from ledger --ledger --chain-id %s --node %s --keyring-backend file --gas auto --gas-prices %s%s --gas-adjustment 1.5",
 		n.CliName,
 		validator.RestakeAddress,
 		n.ChainID,
@@ -111,19 +111,48 @@ func (n Network) GrantRestake(addr string, validator validator.ValidatorForNetwo
 		minGasPrice,
 		denom)
 
+	fmt.Println("Instructions to create the necessary authz grants to enable REStake:")
+	fmt.Println()
 	if n.Codebase.GitRepo != "" {
-		fmt.Printf("You can find the binaries, or build from source here: %s (reported recommended version is %s)\n", n.Codebase.GitRepo, n.Codebase.RecommendedVersion)
-		fmt.Println()
+		fmt.Println("First you need to get the cli for the chain.")
+		fmt.Sprintf("If you want to build the cli from source, the source code is here: %s (reported recommended version is %s)", n.Codebase.GitRepo, n.Codebase.RecommendedVersion)
+
+		if n.Codebase.Binaries.LinuxAmd64 != "" {
+			fmt.Printf("Linux amd64: %s\n", n.Codebase.Binaries.LinuxAmd64)
+			if n.Codebase.Binaries.LinuxArm64 != "" {
+				fmt.Printf("Linux arm64: %s\n", n.Codebase.Binaries.LinuxArm64)
+			}
+			if n.Codebase.Binaries.DarwinAmd64 != "" {
+				fmt.Printf("Darwin (macOS) amd64: %s\n", n.Codebase.Binaries.DarwinAmd64)
+			}
+			if n.Codebase.Binaries.WindowsAmd64 != "" {
+				fmt.Printf("Windows amd64: %s\n", n.Codebase.Binaries.WindowsAmd64)
+			}
+		} else {
+			fmt.Printf("No binaries were reported from the chain registry repo, but you can go to the GitHub repo linked above to find them (usually)")
+		}
+
+	} else {
+		fmt.Println("You need to find and download the cli for the chain, but we we were not able to find them right now from the chain registry.")
 	}
-
-	fmt.Printf("First, you need to add you ledger to your keys in %s with the following command:\n%s", n.CliName, addKeyCommand)
-
-	fmt.Println("The following commands will grant your validator access to withdraw rewards and delegate them:")
 	fmt.Println()
-	fmt.Println(command1)
+
+	fmt.Println("After getting the cli, you need to run 3 commands:")
 	fmt.Println()
-	fmt.Println(command2)
+	fmt.Printf("1: Add you ledger to your keys in %s with the following command:\n", n.CliName)
+	fmt.Println(addKeyCommand)
+	fmt.Println()
+
+	fmt.Println("2: Grant your validator access to withdraw rewards (to your own wallet, not theirs) on your behalf:")
+	fmt.Println(withdrawCommand)
+	fmt.Println()
+
+	fmt.Println("3: Grant your validator access to delegate on your behalf:")
+	fmt.Println(delegateCommand)
+	fmt.Println()
+
 	fmt.Println("NB! This script is not perfect, and the commands listed above might not work without some small adjustments in certain cases.")
+	fmt.Println("You can check out this cli's accompanying blog post here: https://gjermund.tech/blog/making-ledger-work-on-restake/")
 	fmt.Println("Reach out to gjermund#1586 on ECO Stake discord if you're having problems")
 
 	return nil
