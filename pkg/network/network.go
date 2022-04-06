@@ -115,7 +115,7 @@ func (n Network) GrantRestake(addr string, validator validator.ValidatorForNetwo
 	fmt.Println()
 	if n.Codebase.GitRepo != "" {
 		fmt.Println("First you need to get the cli for the chain.")
-		fmt.Sprintf("If you want to build the cli from source, the source code is here: %s (reported recommended version is %s)", n.Codebase.GitRepo, n.Codebase.RecommendedVersion)
+		fmt.Printf("If you want to build the cli from source, the source code is here: %s (reported recommended version is %s)", n.Codebase.GitRepo, n.Codebase.RecommendedVersion)
 
 		if n.Codebase.Binaries.LinuxAmd64 != "" {
 			fmt.Printf("Linux amd64: %s\n", n.Codebase.Binaries.LinuxAmd64)
