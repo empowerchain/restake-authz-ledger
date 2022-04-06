@@ -21,6 +21,8 @@ jobs:
       - name: build
         run: earthly --ci +build-release
 
+      - run: ls -la dist
+
       - name: Release
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
@@ -28,4 +30,10 @@ jobs:
           automatic_release_tag: "latest"
           prerelease: false
           title: "Latest release"
-          files: ./dist/*.tar.gz
+          files: |
+            dist/restake-authz-ledger-darwin-amd64.tar.gz
+            dist/restake-authz-ledger-darwin-arm64.tar.gz
+            dist/restake-authz-ledger-linux-amd64.tar.gz
+            dist/restake-authz-ledger-linux-arm64.tar.gz
+            dist/restake-authz-ledger-windows-amd64.tar.gz
+            dist/restake-authz-ledger-windows-arm64.tar.gz
