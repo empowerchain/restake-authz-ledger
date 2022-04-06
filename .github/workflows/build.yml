@@ -1,0 +1,30 @@
+name: Build CLI
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - id: git-sha-short
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+
+      - uses: earthly/actions/setup-earthly@v1
+        with:
+          version: v0.6.13
+
+      - name: build
+        run: earthly --ci +build-release
+
+      - name: Release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          title: "Latest release"
+          files: dist/*.tar.gz
