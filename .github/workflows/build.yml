@@ -19,9 +19,7 @@ jobs:
           version: v0.6.13
 
       - name: build
-        run: earthly --ci +build-release
-
-      - run: ls -la dist
+        run: earthly +build-release
 
       - name: Release
         uses: "marvinpinto/action-automatic-releases@latest"
@@ -30,10 +28,4 @@ jobs:
           automatic_release_tag: "latest"
           prerelease: false
           title: "Latest release"
-          files: |
-            dist/restake-authz-ledger-darwin-amd64.tar.gz
-            dist/restake-authz-ledger-darwin-arm64.tar.gz
-            dist/restake-authz-ledger-linux-amd64.tar.gz
-            dist/restake-authz-ledger-linux-arm64.tar.gz
-            dist/restake-authz-ledger-windows-amd64.tar.gz
-            dist/restake-authz-ledger-windows-arm64.tar.gz
+          files: ./dist/*.tar.gz
