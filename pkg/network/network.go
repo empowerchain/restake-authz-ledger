@@ -88,7 +88,7 @@ func GetNetworks() ([]Network, error) {
 }
 
 func (n Network) GrantRestake(addr string, validator validator.ValidatorForNetwork) error {
-	addKeyCommand := fmt.Sprintf("$ %s keys add ledger --ledger --keyring-backend file\n", n.CliName)
+	addKeyCommand := fmt.Sprintf("$ /path/to/binary/%s keys add ledger --ledger --keyring-backend file\n", n.CliName)
 
 	minGasPrice := "CHANGEFEE"
 	denom := "changedenom"
@@ -114,7 +114,7 @@ func (n Network) GrantRestake(addr string, validator validator.ValidatorForNetwo
 	fmt.Println("Instructions to create the necessary authz grants to enable REStake:")
 	fmt.Println()
 	if n.Codebase.GitRepo != "" {
-		fmt.Println("First you need to get the cli for the chain.")
+		fmt.Println("First, you need to get the cli for the chain.")
 		fmt.Printf("If you want to build the cli from source, the source code is here: %s (reported recommended version is %s)\n", n.Codebase.GitRepo, n.Codebase.RecommendedVersion)
 
 		if n.Codebase.Binaries.LinuxAmd64 != "" {
@@ -135,11 +135,12 @@ func (n Network) GrantRestake(addr string, validator validator.ValidatorForNetwo
 	} else {
 		fmt.Println("You need to find and download the cli for the chain, but we we were not able to find them right now from the chain registry.")
 	}
+	fmt.Println("!IMPORTANT! In some cases, the binaries are not built with support for Ledger. In those cases you will need to build from source.")
 	fmt.Println()
 
 	fmt.Println("After getting the cli, you need to run 3 commands:")
 	fmt.Println()
-	fmt.Printf("1: Add you ledger to your keys in %s with the following command:\n", n.CliName)
+	fmt.Printf("1: Add your ledger to your keys in %s with the following command:\n", n.CliName)
 	fmt.Println(addKeyCommand)
 	fmt.Println()
 
