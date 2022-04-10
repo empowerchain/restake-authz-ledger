@@ -137,6 +137,8 @@ func (n Network) GrantRestake(addr string, validator validator.ValidatorForNetwo
 	}
 	fmt.Println("!IMPORTANT! In some cases, the binaries are not built with support for Ledger. In those cases you will need to build from source.")
 	fmt.Println()
+	fmt.Println("If you downloaded that binary instead of building from source, there is a good chance you might need to make the binary executable. \nTo do this, all you need to do is:\n$ chmod +x /path/to/binary/cli-name")
+	fmt.Println()
 
 	fmt.Println("After getting the cli, you need to run 3 commands:")
 	fmt.Println()
