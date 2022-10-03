@@ -2,8 +2,9 @@ package validator
 
 import (
 	"encoding/json"
-	"github.com/go-errors/errors"
 	"net/http"
+
+	"github.com/go-errors/errors"
 )
 
 type ValidatorForNetwork struct {
@@ -28,7 +29,11 @@ type ValidatorJSON struct {
 type ChainJSON struct {
 	Name    string      `json:"name"`
 	Address string      `json:"address"`
-	Restake interface{} `json:"restake"`
+	Restake RestakeJSON `json:"restake"`
+}
+
+type RestakeJSON struct {
+	Address string `json:"address"`
 }
 
 func GetSupportedValidators(network string) (supportedValidators []ValidatorForNetwork, err error) {
@@ -51,15 +56,11 @@ func GetSupportedValidators(network string) (supportedValidators []ValidatorForN
 	for _, v := range validatorsRes.Validators {
 		for _, c := range v.Chains {
 			if c.Name == network {
-				restakeAddr, ok := c.Restake.(string)
-				if !ok {
-					continue
-				}
 				supportedValidators = append(supportedValidators, ValidatorForNetwork{
 					Path:             v.Path,
 					Name:             v.Name,
 					Identity:         v.Identity,
-					RestakeAddress:   restakeAddr,
+					RestakeAddress:   c.Restake.Address,
 					ValidatorAddress: c.Address,
 				})
 			}

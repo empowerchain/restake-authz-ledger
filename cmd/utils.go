@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/bjaanes/restake-authz-ledger/pkg/network"
 	"github.com/bjaanes/restake-authz-ledger/pkg/validator"
@@ -12,7 +13,7 @@ import (
 func askForAddress() (string, error) {
 	addr := ""
 	prompt := &survey.Input{
-		Message: "Address",
+		Message: "Your account address",
 	}
 	if err := survey.AskOne(prompt, &addr); err != nil {
 		return "", err
