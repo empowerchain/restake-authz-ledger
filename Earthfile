@@ -1,5 +1,5 @@
 VERSION 0.6
-FROM golang:1.17-bullseye
+FROM golang:1.18-bullseye
 WORKDIR /app
 
 deps:
