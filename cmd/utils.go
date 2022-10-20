@@ -40,13 +40,16 @@ func selectNetwork() (network.Network, error) {
 	if err := survey.AskOne(networkPrompt, &networkChoiceIndex); err != nil {
 		return network.Network{}, errors.Wrap(err, 0)
 	}
-	network := networks[networkChoiceIndex]
 
-	return network, nil
+	return networks[networkChoiceIndex], nil
 }
 
 func selectValidator(n network.Network, delegations ...stakingtypes.Delegation) (validator.ValidatorForNetwork, error) {
 	supportedValidators, err := validator.GetSupportedValidators(n.Identifier)
+	if err != nil {
+		return validator.ValidatorForNetwork{}, errors.Wrap(err, 0)
+	}
+
 	var validators []validator.ValidatorForNetwork
 	if len(delegations) == 0 {
 		validators = supportedValidators
@@ -60,12 +63,13 @@ func selectValidator(n network.Network, delegations ...stakingtypes.Delegation) 
 		}
 	}
 
+	if len(validators) == 0 {
+		return validator.ValidatorForNetwork{}, errors.New("no relevant validators found (is the address staking with a REStake-enabled validator on this network?)")
+	}
+
 	validatorNameList := make([]string, len(validators))
 	for i, v := range validators {
 		validatorNameList[i] = v.Name
-	}
-	if err != nil {
-		return validator.ValidatorForNetwork{}, err
 	}
 	var validatorChoiceIndex int
 	validatorPrompt := &survey.Select{
@@ -74,9 +78,7 @@ func selectValidator(n network.Network, delegations ...stakingtypes.Delegation) 
 	}
 	err = survey.AskOne(validatorPrompt, &validatorChoiceIndex)
 	if err != nil {
-		return validator.ValidatorForNetwork{}, err
+		return validator.ValidatorForNetwork{}, errors.Wrap(err, 0)
 	}
-	validator := validators[validatorChoiceIndex]
-
-	return validator, nil
+	return validators[validatorChoiceIndex], nil
 }

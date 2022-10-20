@@ -53,7 +53,15 @@ func GetSupportedValidators(network string) (supportedValidators []ValidatorForN
 			if c.Name == network {
 				restakeAddr, ok := c.Restake.(string)
 				if !ok {
-					continue
+					restakeObj, ok := c.Restake.(map[string]interface{})
+					if !ok {
+						continue
+					}
+
+					restakeAddr, ok = restakeObj["address"].(string)
+					if !ok {
+						continue
+					}
 				}
 				supportedValidators = append(supportedValidators, ValidatorForNetwork{
 					Path:             v.Path,

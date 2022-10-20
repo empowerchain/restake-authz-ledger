@@ -31,7 +31,12 @@ func RunE(f func(cmd *cobra.Command, args []string) error) func(cmd *cobra.Comma
 	return func(cmd *cobra.Command, args []string) (err error) {
 		err = f(cmd, args)
 		if verbose && err != nil {
-			fmt.Println(err.(*errors.Error).ErrorStack())
+			stackedErr, ok := err.(*errors.Error)
+			if ok {
+				fmt.Println(stackedErr.ErrorStack())
+				return err
+			}
+			fmt.Println(err)
 		}
 
 		return err
